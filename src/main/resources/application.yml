@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: document-processing-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/document_processing}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  aws:
+    region: ${AWS_REGION:us-east-1}
+    s3:
+      bucket: ${AWS_S3_BUCKET:documents}
+      endpoint: ${AWS_S3_ENDPOINT:}
+      path-style-access-enabled: ${AWS_S3_PATH_STYLE_ACCESS_ENABLED:false}
+  chunking:
+    strategy: ${CHUNKING_STRATEGY:RECURSIVE}
+    max-chunk-size: ${CHUNKING_MAX_SIZE:1000}
+    overlap-size: ${CHUNKING_OVERLAP_SIZE:200}
+    min-chunk-size: ${CHUNKING_MIN_SIZE:200}
+  pdf:
+    max-file-size-bytes: ${PDF_MAX_FILE_SIZE_BYTES:52428800}
+    password-protected-supported: ${PDF_PASSWORD_PROTECTED_SUPPORTED:false}
+    extraction-timeout: ${PDF_EXTRACTION_TIMEOUT:PT2M}
+  storage:
+    document-prefix: ${STORAGE_DOCUMENT_PREFIX:documents}
+    temporary-directory: ${STORAGE_TEMPORARY_DIRECTORY:${java.io.tmpdir}}

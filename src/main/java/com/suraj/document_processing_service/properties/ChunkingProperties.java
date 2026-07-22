@@ -1,0 +1,28 @@
+package com.suraj.document_processing_service.properties;
+
+import com.suraj.document_processing_service.enums.ChunkingStrategyType;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
+
+@Getter
+@Setter
+@Validated
+@ConfigurationProperties(prefix = "app.chunking")
+public class ChunkingProperties {
+
+    @NotNull
+    private ChunkingStrategyType strategy = ChunkingStrategyType.RECURSIVE;
+
+    @Min(1)
+    private int maxChunkSize = 1000;
+
+    @Min(0)
+    private int overlapSize = 200;
+
+    @Min(1)
+    private int minChunkSize = 200;
+}
