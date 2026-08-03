@@ -14,7 +14,6 @@ public class DefaultMetadataGenerator implements MetadataGenerator {
 
     @Override
     public ChunkMetadata generate(Document document, TextChunk chunk) {
-        // TODO enrich metadata with section/title detection once document structure extraction is implemented.
         return new ChunkMetadata(
                 document.getId(),
                 chunk.chunkOrder(),

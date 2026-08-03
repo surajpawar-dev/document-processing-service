@@ -3,9 +3,10 @@ package com.suraj.document_processing_service.service;
 import com.suraj.document_processing_service.dto.ChunkResponse;
 import com.suraj.document_processing_service.dto.DocumentResponse;
 import com.suraj.document_processing_service.dto.DocumentStatusResponse;
+import com.suraj.document_processing_service.dto.PagedResponse;
 import com.suraj.document_processing_service.dto.ProcessDocumentRequest;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 
 public interface DocumentProcessingService {
 
@@ -15,7 +16,7 @@ public interface DocumentProcessingService {
 
     DocumentStatusResponse getStatus(UUID documentId);
 
-    List<ChunkResponse> getChunks(UUID documentId);
+    PagedResponse<ChunkResponse> getChunks(UUID documentId, Pageable pageable);
 
     DocumentResponse reprocess(UUID documentId);
 }

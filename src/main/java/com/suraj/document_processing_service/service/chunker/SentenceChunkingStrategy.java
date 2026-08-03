@@ -4,7 +4,10 @@ import com.suraj.document_processing_service.enums.ChunkingStrategyType;
 import com.suraj.document_processing_service.exception.ChunkingException;
 import com.suraj.document_processing_service.properties.ChunkingProperties;
 import com.suraj.document_processing_service.service.cleaner.CleanedDocument;
+import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +25,27 @@ public class SentenceChunkingStrategy implements ChunkingStrategy {
     @Override
     public List<TextChunk> chunk(CleanedDocument document) {
         try {
-            // TODO implement sentence-aware chunking using configured size limits.
-            return List.of();
+            var text = ChunkingSupport.normalizeText(document.text());
+            var sentences = splitSentences(text);
+            var chunks = ChunkingSupport.mergeWithOverlap(sentences, properties);
+            return ChunkingSupport.toChunks(chunks, text, type());
         } catch (RuntimeException ex) {
             throw new ChunkingException("Unable to chunk document by sentence", ex);
         }
+    }
+
+    private List<String> splitSentences(String text) {
+        var iterator = BreakIterator.getSentenceInstance(Locale.ROOT);
+        iterator.setText(text);
+
+        var sentences = new ArrayList<String>();
+        var start = iterator.first();
+        for (var end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+            var sentence = text.substring(start, end).trim();
+            if (!sentence.isBlank()) {
+                sentences.add(sentence);
+            }
+        }
+        return sentences;
     }
 }

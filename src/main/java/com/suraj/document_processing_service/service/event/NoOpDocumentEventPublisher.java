@@ -12,7 +12,6 @@ public class NoOpDocumentEventPublisher implements DocumentEventPublisher {
 
     @Override
     public void publishDocumentReady(DocumentReadyEvent event) {
-        // TODO integrate Kafka, SQS, or another event transport in the infrastructure layer.
         log.info("Document ready event prepared documentId={} chunkCount={}", event.documentId(), event.chunkCount());
     }
 }

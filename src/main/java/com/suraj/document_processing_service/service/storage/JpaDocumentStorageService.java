@@ -6,6 +6,7 @@ import com.suraj.document_processing_service.entity.DocumentChunk;
 import com.suraj.document_processing_service.entity.DocumentProcessingHistory;
 import com.suraj.document_processing_service.enums.DocumentProcessingStatus;
 import com.suraj.document_processing_service.enums.DocumentSourceType;
+import com.suraj.document_processing_service.constants.ApplicationConstants;
 import com.suraj.document_processing_service.exception.DocumentNotFoundException;
 import com.suraj.document_processing_service.exception.StorageException;
 import com.suraj.document_processing_service.repository.ChunkRepository;
@@ -14,7 +15,9 @@ import com.suraj.document_processing_service.repository.ProcessingHistoryReposit
 import com.suraj.document_processing_service.service.chunker.TextChunk;
 import com.suraj.document_processing_service.service.metadata.MetadataGenerator;
 import jakarta.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,14 +37,14 @@ public class JpaDocumentStorageService implements DocumentStorageService {
         try {
             var document = new Document();
             document.setFileName(request.fileName());
-            document.setContentType("application/pdf");
+            document.setContentType(ApplicationConstants.PDF_CONTENT_TYPE);
             document.setSource(DocumentSourceType.S3);
             document.setSourceBucket(request.s3Bucket());
             document.setSourceKey(request.s3Key());
             document.setChecksum(request.checksum());
             document.setLanguage(request.language());
             var saved = documentRepository.save(document);
-            addHistory(saved, DocumentProcessingStatus.RECEIVED, "Document processing request received");
+            addHistory(saved, DocumentProcessingStatus.RECEIVED, ApplicationConstants.STATUS_RECEIVED);
             return saved;
         } catch (RuntimeException ex) {
             throw new StorageException("Unable to create document record", ex);
@@ -63,6 +66,29 @@ public class JpaDocumentStorageService implements DocumentStorageService {
             document.setFailureReason(message);
         }
         addHistory(document, status, message);
+        return documentRepository.save(document);
+    }
+
+    @Override
+    @Transactional
+    public Document updateReadMetadata(UUID documentId, Integer pageCount, Map<String, Object> metadata) {
+        var document = getDocument(documentId);
+        document.setPageCount(pageCount);
+        if (metadata != null && !metadata.isEmpty()) {
+            document.setMetadata(new HashMap<>(metadata));
+        }
+        return documentRepository.save(document);
+    }
+
+    @Override
+    @Transactional
+    public Document resetForProcessing(UUID documentId) {
+        var document = getDocument(documentId);
+        chunkRepository.deleteByDocumentId(documentId);
+        document.setProcessingStatus(DocumentProcessingStatus.RECEIVED);
+        document.setFailureReason(null);
+        document.setChunkCount(0);
+        addHistory(document, DocumentProcessingStatus.RECEIVED, ApplicationConstants.STATUS_RECEIVED);
         return documentRepository.save(document);
     }
 

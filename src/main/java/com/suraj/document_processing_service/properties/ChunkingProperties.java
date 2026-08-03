@@ -1,6 +1,7 @@
 package com.suraj.document_processing_service.properties;
 
 import com.suraj.document_processing_service.enums.ChunkingStrategyType;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -25,4 +26,14 @@ public class ChunkingProperties {
 
     @Min(1)
     private int minChunkSize = 200;
+
+    @AssertTrue(message = "overlapSize must be smaller than maxChunkSize")
+    boolean isOverlapSmallerThanMaxChunkSize() {
+        return overlapSize < maxChunkSize;
+    }
+
+    @AssertTrue(message = "minChunkSize must be less than or equal to maxChunkSize")
+    boolean isMinChunkSizeWithinMaxChunkSize() {
+        return minChunkSize <= maxChunkSize;
+    }
 }

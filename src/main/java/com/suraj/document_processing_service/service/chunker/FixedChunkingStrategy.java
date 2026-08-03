@@ -22,8 +22,9 @@ public class FixedChunkingStrategy implements ChunkingStrategy {
     @Override
     public List<TextChunk> chunk(CleanedDocument document) {
         try {
-            // TODO implement fixed-size chunking using properties.getMaxChunkSize().
-            return List.of();
+            var text = ChunkingSupport.normalizeText(document.text());
+            var chunks = ChunkingSupport.fixedWindows(text, properties);
+            return ChunkingSupport.toChunks(chunks, text, type());
         } catch (RuntimeException ex) {
             throw new ChunkingException("Unable to chunk document using fixed-size strategy", ex);
         }
