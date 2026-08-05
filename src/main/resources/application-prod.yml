@@ -17,3 +17,8 @@ app:
     region: ${AWS_REGION}
     s3:
       bucket: ${AWS_S3_BUCKET}
+    sqs:
+      endpoint: ${AWS_SQS_ENDPOINT:}
+      document-ready-queue-url: ${DOCUMENT_READY_QUEUE_URL}
+  events:
+    publisher: ${DOCUMENT_EVENT_PUBLISHER:sqs}

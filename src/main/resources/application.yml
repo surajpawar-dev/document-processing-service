@@ -28,6 +28,8 @@ management:
         enabled: true
 
 app:
+  events:
+    publisher: ${DOCUMENT_EVENT_PUBLISHER:sqs}
   processing:
     core-pool-size: ${PROCESSING_CORE_POOL_SIZE:2}
     max-pool-size: ${PROCESSING_MAX_POOL_SIZE:4}
@@ -39,6 +41,9 @@ app:
       bucket: ${AWS_S3_BUCKET:documents}
       endpoint: ${AWS_S3_ENDPOINT:}
       path-style-access-enabled: ${AWS_S3_PATH_STYLE_ACCESS_ENABLED:false}
+    sqs:
+      endpoint: ${AWS_SQS_ENDPOINT:}
+      document-ready-queue-url: ${DOCUMENT_READY_QUEUE_URL:}
   chunking:
     strategy: ${CHUNKING_STRATEGY:RECURSIVE}
     max-chunk-size: ${CHUNKING_MAX_SIZE:1000}
