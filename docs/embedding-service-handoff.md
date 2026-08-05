@@ -450,4 +450,3 @@ Build the Embedding Service in this order:
 8. SQS listener/publisher.
 9. Search API.
 10. Integration tests.
-

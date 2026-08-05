@@ -5,4 +5,4 @@ spring:
 
 logging:
   level:
-    com.suraj.document_processing_service: INFO
+    com.suraj.rag.documentprocessing: INFO

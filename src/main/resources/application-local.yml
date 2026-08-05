@@ -6,4 +6,4 @@ spring:
 
 logging:
   level:
-    com.suraj.document_processing_service: DEBUG
+    com.suraj.rag.documentprocessing: DEBUG

@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk AS build
+﻿FROM eclipse-temurin:21-jdk AS build
 WORKDIR /workspace
 COPY mvnw .
 COPY .mvn .mvn
@@ -10,7 +10,7 @@ RUN ./mvnw -B -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 RUN groupadd --system app && useradd --system --gid app app
-COPY --from=build /workspace/target/document-processing-service-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=build /workspace/target/rag-document-processing-service-0.0.1-SNAPSHOT.jar /app/app.jar
 USER app
 EXPOSE 8080
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-} -jar /app/app.jar"]

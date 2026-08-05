@@ -8,10 +8,10 @@
 		<version>3.3.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.suraj</groupId>
-	<artifactId>document-processing-service</artifactId>
+	<groupId>com.suraj.rag</groupId>
+	<artifactId>rag-document-processing-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>document-processing-service</name>
+	<name>rag-document-processing-service</name>
 	<description>Enterprise document ingestion and chunk preparation service for RAG pipelines</description>
 	<url/>
 	<licenses>
