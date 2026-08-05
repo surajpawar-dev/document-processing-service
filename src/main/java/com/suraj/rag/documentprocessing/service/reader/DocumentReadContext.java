@@ -6,6 +6,4 @@ public record DocumentReadContext(
         String sourceBucket,
         String sourceKey,
         String checksum,
-        String language
-) {
-}
+        String language) {}

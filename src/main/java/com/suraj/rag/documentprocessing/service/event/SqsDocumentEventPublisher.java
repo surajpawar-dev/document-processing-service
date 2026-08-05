@@ -13,7 +13,11 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 @Component
-@ConditionalOnProperty(prefix = "app.events", name = "publisher", havingValue = "sqs", matchIfMissing = true)
+@ConditionalOnProperty(
+        prefix = "app.events",
+        name = "publisher",
+        havingValue = "sqs",
+        matchIfMissing = true)
 public class SqsDocumentEventPublisher implements DocumentEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(SqsDocumentEventPublisher.class);
@@ -22,7 +26,8 @@ public class SqsDocumentEventPublisher implements DocumentEventPublisher {
     private final ObjectMapper objectMapper;
     private final AwsProperties awsProperties;
 
-    public SqsDocumentEventPublisher(SqsClient sqsClient, ObjectMapper objectMapper, AwsProperties awsProperties) {
+    public SqsDocumentEventPublisher(
+            SqsClient sqsClient, ObjectMapper objectMapper, AwsProperties awsProperties) {
         this.sqsClient = sqsClient;
         this.objectMapper = objectMapper;
         this.awsProperties = awsProperties;
@@ -36,17 +41,19 @@ public class SqsDocumentEventPublisher implements DocumentEventPublisher {
         }
 
         String body = toJson(event);
-        var requestBuilder = SendMessageRequest.builder()
-                .queueUrl(queueUrl)
-                .messageBody(body);
+        var requestBuilder = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(body);
 
         if (queueUrl.endsWith(".fifo")) {
-            requestBuilder.messageGroupId(event.documentId().toString())
+            requestBuilder
+                    .messageGroupId(event.documentId().toString())
                     .messageDeduplicationId(event.documentId() + ":" + event.checksum());
         }
 
         sqsClient.sendMessage(requestBuilder.build());
-        log.info("Published document ready event documentId={} chunkCount={}", event.documentId(), event.chunkCount());
+        log.info(
+                "Published document ready event documentId={} chunkCount={}",
+                event.documentId(),
+                event.chunkCount());
     }
 
     private String toJson(DocumentReadyEvent event) {

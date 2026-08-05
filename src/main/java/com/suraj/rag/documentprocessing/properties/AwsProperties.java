@@ -13,20 +13,16 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.aws")
 public class AwsProperties {
 
-    @NotBlank
-    private String region;
+    @NotBlank private String region;
 
-    @Valid
-    private S3 s3 = new S3();
+    @Valid private S3 s3 = new S3();
 
-    @Valid
-    private Sqs sqs = new Sqs();
+    @Valid private Sqs sqs = new Sqs();
 
     @Getter
     @Setter
     public static class S3 {
-        @NotBlank
-        private String bucket;
+        @NotBlank private String bucket;
 
         private String endpoint;
 

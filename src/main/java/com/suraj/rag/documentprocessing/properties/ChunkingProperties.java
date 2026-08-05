@@ -15,25 +15,19 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.chunking")
 public class ChunkingProperties {
 
-    @NotNull
-    private ChunkingStrategyType strategy = ChunkingStrategyType.RECURSIVE;
+    @NotNull private ChunkingStrategyType strategy = ChunkingStrategyType.RECURSIVE;
 
-    @Min(1)
-    private int maxChunkSize = 1000;
+    @Min(1) private int maxChunkSize = 1000;
 
-    @Min(0)
-    private int overlapSize = 200;
+    @Min(0) private int overlapSize = 200;
 
-    @Min(1)
-    private int minChunkSize = 200;
+    @Min(1) private int minChunkSize = 200;
 
-    @AssertTrue(message = "overlapSize must be smaller than maxChunkSize")
-    boolean isOverlapSmallerThanMaxChunkSize() {
+    @AssertTrue(message = "overlapSize must be smaller than maxChunkSize") boolean isOverlapSmallerThanMaxChunkSize() {
         return overlapSize < maxChunkSize;
     }
 
-    @AssertTrue(message = "minChunkSize must be less than or equal to maxChunkSize")
-    boolean isMinChunkSizeWithinMaxChunkSize() {
+    @AssertTrue(message = "minChunkSize must be less than or equal to maxChunkSize") boolean isMinChunkSizeWithinMaxChunkSize() {
         return minChunkSize <= maxChunkSize;
     }
 }

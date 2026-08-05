@@ -27,8 +27,7 @@ public class DocumentMapper {
                 document.getMetadata(),
                 document.getCreatedAt(),
                 document.getUpdatedAt(),
-                document.getVersion()
-        );
+                document.getVersion());
     }
 
     public DocumentStatusResponse toStatusResponse(Document document) {
@@ -36,8 +35,7 @@ public class DocumentMapper {
                 document.getId(),
                 document.getProcessingStatus(),
                 document.getFailureReason(),
-                document.getUpdatedAt()
-        );
+                document.getUpdatedAt());
     }
 
     public ChunkResponse toChunkResponse(DocumentChunk chunk) {
@@ -54,7 +52,6 @@ public class DocumentMapper {
                 chunk.getSource(),
                 chunk.getParentChunkId(),
                 chunk.getMetadata(),
-                chunk.getCreatedAt()
-        );
+                chunk.getCreatedAt());
     }
 }

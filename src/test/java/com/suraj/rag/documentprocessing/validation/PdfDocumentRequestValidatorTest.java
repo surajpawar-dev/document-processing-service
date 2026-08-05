@@ -15,52 +15,52 @@ class PdfDocumentRequestValidatorTest {
 
     @Test
     void acceptsValidPdfRequest() {
-        var request = new ProcessDocumentRequest(
-                "contract.pdf",
-                "document-processing-prod",
-                "incoming/contract.pdf",
-                VALID_CHECKSUM,
-                "en"
-        );
+        var request =
+                new ProcessDocumentRequest(
+                        "contract.pdf",
+                        "document-processing-prod",
+                        "incoming/contract.pdf",
+                        VALID_CHECKSUM,
+                        "en");
 
         assertDoesNotThrow(() -> validator.validate(request));
     }
 
     @Test
     void rejectsNonPdfDocuments() {
-        var request = new ProcessDocumentRequest(
-                "contract.docx",
-                "document-processing-prod",
-                "incoming/contract.docx",
-                VALID_CHECKSUM,
-                "en"
-        );
+        var request =
+                new ProcessDocumentRequest(
+                        "contract.docx",
+                        "document-processing-prod",
+                        "incoming/contract.docx",
+                        VALID_CHECKSUM,
+                        "en");
 
         assertThrows(ValidationException.class, () -> validator.validate(request));
     }
 
     @Test
     void rejectsInvalidChecksum() {
-        var request = new ProcessDocumentRequest(
-                "contract.pdf",
-                "document-processing-prod",
-                "incoming/contract.pdf",
-                "not-a-sha256",
-                "en"
-        );
+        var request =
+                new ProcessDocumentRequest(
+                        "contract.pdf",
+                        "document-processing-prod",
+                        "incoming/contract.pdf",
+                        "not-a-sha256",
+                        "en");
 
         assertThrows(ValidationException.class, () -> validator.validate(request));
     }
 
     @Test
     void rejectsUnsafeS3Key() {
-        var request = new ProcessDocumentRequest(
-                "contract.pdf",
-                "document-processing-prod",
-                "../contract.pdf",
-                VALID_CHECKSUM,
-                "en"
-        );
+        var request =
+                new ProcessDocumentRequest(
+                        "contract.pdf",
+                        "document-processing-prod",
+                        "../contract.pdf",
+                        VALID_CHECKSUM,
+                        "en");
 
         assertThrows(ValidationException.class, () -> validator.validate(request));
     }

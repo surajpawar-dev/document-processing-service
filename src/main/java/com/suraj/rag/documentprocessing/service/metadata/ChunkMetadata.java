@@ -13,6 +13,4 @@ public record ChunkMetadata(
         String source,
         String chunkChecksum,
         UUID parentChunkId,
-        Map<String, Object> metadata
-) {
-}
+        Map<String, Object> metadata) {}

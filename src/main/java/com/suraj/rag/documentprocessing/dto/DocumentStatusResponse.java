@@ -8,6 +8,4 @@ public record DocumentStatusResponse(
         UUID documentId,
         DocumentProcessingStatus status,
         String failureReason,
-        Instant updatedAt
-) {
-}
+        Instant updatedAt) {}

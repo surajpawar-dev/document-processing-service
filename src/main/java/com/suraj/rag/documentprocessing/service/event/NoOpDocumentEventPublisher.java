@@ -14,6 +14,9 @@ public class NoOpDocumentEventPublisher implements DocumentEventPublisher {
 
     @Override
     public void publishDocumentReady(DocumentReadyEvent event) {
-        log.info("Document ready event prepared documentId={} chunkCount={}", event.documentId(), event.chunkCount());
+        log.info(
+                "Document ready event prepared documentId={} chunkCount={}",
+                event.documentId(),
+                event.chunkCount());
     }
 }

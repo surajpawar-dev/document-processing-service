@@ -12,9 +12,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.storage")
 public class StorageProperties {
 
-    @NotBlank
-    private String documentPrefix = "documents";
+    @NotBlank private String documentPrefix = "documents";
 
-    @NotBlank
-    private String temporaryDirectory;
+    @NotBlank private String temporaryDirectory;
 }

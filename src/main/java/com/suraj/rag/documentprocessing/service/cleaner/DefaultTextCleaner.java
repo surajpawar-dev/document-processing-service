@@ -14,7 +14,8 @@ public class DefaultTextCleaner implements TextCleaner {
     private static final Pattern HORIZONTAL_WHITESPACE = Pattern.compile("[\\t\\x0B ]+");
     private static final Pattern LINE_PADDING = Pattern.compile("(?m)^ +| +$");
     private static final Pattern EXCESSIVE_BLANK_LINES = Pattern.compile("\\n{3,}");
-    private static final Pattern STANDALONE_PAGE_NUMBER = Pattern.compile("(?m)^\\s*(?:page\\s*)?\\d+\\s*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern STANDALONE_PAGE_NUMBER =
+            Pattern.compile("(?m)^\\s*(?:page\\s*)?\\d+\\s*$", Pattern.CASE_INSENSITIVE);
 
     @Override
     public CleanedDocument clean(ReadDocument document) {

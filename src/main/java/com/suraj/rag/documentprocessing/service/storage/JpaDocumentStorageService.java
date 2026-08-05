@@ -1,12 +1,12 @@
 package com.suraj.rag.documentprocessing.service.storage;
 
+import com.suraj.rag.documentprocessing.constants.ApplicationConstants;
 import com.suraj.rag.documentprocessing.dto.ProcessDocumentRequest;
 import com.suraj.rag.documentprocessing.entity.Document;
 import com.suraj.rag.documentprocessing.entity.DocumentChunk;
 import com.suraj.rag.documentprocessing.entity.DocumentProcessingHistory;
 import com.suraj.rag.documentprocessing.enums.DocumentProcessingStatus;
 import com.suraj.rag.documentprocessing.enums.DocumentSourceType;
-import com.suraj.rag.documentprocessing.constants.ApplicationConstants;
 import com.suraj.rag.documentprocessing.exception.DocumentNotFoundException;
 import com.suraj.rag.documentprocessing.exception.StorageException;
 import com.suraj.rag.documentprocessing.repository.ChunkRepository;
@@ -44,7 +44,8 @@ public class JpaDocumentStorageService implements DocumentStorageService {
             document.setChecksum(request.checksum());
             document.setLanguage(request.language());
             var saved = documentRepository.save(document);
-            addHistory(saved, DocumentProcessingStatus.RECEIVED, ApplicationConstants.STATUS_RECEIVED);
+            addHistory(
+                    saved, DocumentProcessingStatus.RECEIVED, ApplicationConstants.STATUS_RECEIVED);
             return saved;
         } catch (RuntimeException ex) {
             throw new StorageException("Unable to create document record", ex);
@@ -53,7 +54,8 @@ public class JpaDocumentStorageService implements DocumentStorageService {
 
     @Override
     public Document getDocument(UUID documentId) {
-        return documentRepository.findById(documentId)
+        return documentRepository
+                .findById(documentId)
                 .orElseThrow(() -> new DocumentNotFoundException(documentId));
     }
 
@@ -71,7 +73,8 @@ public class JpaDocumentStorageService implements DocumentStorageService {
 
     @Override
     @Transactional
-    public Document updateReadMetadata(UUID documentId, Integer pageCount, Map<String, Object> metadata) {
+    public Document updateReadMetadata(
+            UUID documentId, Integer pageCount, Map<String, Object> metadata) {
         var document = getDocument(documentId);
         document.setPageCount(pageCount);
         if (metadata != null && !metadata.isEmpty()) {
@@ -88,7 +91,8 @@ public class JpaDocumentStorageService implements DocumentStorageService {
         document.setProcessingStatus(DocumentProcessingStatus.RECEIVED);
         document.setFailureReason(null);
         document.setChunkCount(0);
-        addHistory(document, DocumentProcessingStatus.RECEIVED, ApplicationConstants.STATUS_RECEIVED);
+        addHistory(
+                document, DocumentProcessingStatus.RECEIVED, ApplicationConstants.STATUS_RECEIVED);
         return documentRepository.save(document);
     }
 
@@ -97,9 +101,7 @@ public class JpaDocumentStorageService implements DocumentStorageService {
     public void replaceChunks(Document document, List<TextChunk> chunks) {
         try {
             chunkRepository.deleteByDocumentId(document.getId());
-            var entities = chunks.stream()
-                    .map(chunk -> toEntity(document, chunk))
-                    .toList();
+            var entities = chunks.stream().map(chunk -> toEntity(document, chunk)).toList();
             chunkRepository.saveAll(entities);
             document.setChunkCount(entities.size());
             documentRepository.save(document);

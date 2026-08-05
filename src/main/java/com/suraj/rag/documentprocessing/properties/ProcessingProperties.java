@@ -13,15 +13,11 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.processing")
 public class ProcessingProperties {
 
-    @Min(1)
-    private int corePoolSize = 2;
+    @Min(1) private int corePoolSize = 2;
 
-    @Min(1)
-    private int maxPoolSize = 4;
+    @Min(1) private int maxPoolSize = 4;
 
-    @Min(1)
-    private int queueCapacity = 100;
+    @Min(1) private int queueCapacity = 100;
 
-    @NotBlank
-    private String threadNamePrefix = "document-processing-";
+    @NotBlank private String threadNamePrefix = "document-processing-";
 }

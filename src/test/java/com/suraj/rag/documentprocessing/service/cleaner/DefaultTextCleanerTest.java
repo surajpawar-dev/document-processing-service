@@ -13,11 +13,11 @@ class DefaultTextCleanerTest {
 
     @Test
     void normalizesPdfTextNoise() {
-        var document = new ReadDocument(
-                "  First\t line  \r\n\r\n1\r\n\f Page 2 \n\n\nSecond   line  ",
-                List.of(),
-                Map.of("pageCount", 2)
-        );
+        var document =
+                new ReadDocument(
+                        "  First\t line  \r\n\r\n1\r\n\f Page 2 \n\n\nSecond   line  ",
+                        List.of(),
+                        Map.of("pageCount", 2));
 
         var cleaned = cleaner.clean(document);
 

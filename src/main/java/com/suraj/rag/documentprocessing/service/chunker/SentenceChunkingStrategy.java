@@ -40,7 +40,9 @@ public class SentenceChunkingStrategy implements ChunkingStrategy {
 
         var sentences = new ArrayList<String>();
         var start = iterator.first();
-        for (var end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+        for (var end = iterator.next();
+                end != BreakIterator.DONE;
+                start = end, end = iterator.next()) {
             var sentence = text.substring(start, end).trim();
             if (!sentence.isBlank()) {
                 sentences.add(sentence);

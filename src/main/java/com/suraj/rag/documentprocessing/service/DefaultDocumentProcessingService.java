@@ -1,9 +1,6 @@
 package com.suraj.rag.documentprocessing.service;
 
-import com.suraj.rag.documentprocessing.client.s3.S3DocumentClient;
-import com.suraj.rag.documentprocessing.constants.ApplicationConstants;
 import com.suraj.rag.documentprocessing.dto.ChunkResponse;
-import com.suraj.rag.documentprocessing.dto.DocumentReadyEvent;
 import com.suraj.rag.documentprocessing.dto.DocumentResponse;
 import com.suraj.rag.documentprocessing.dto.DocumentStatusResponse;
 import com.suraj.rag.documentprocessing.dto.PagedResponse;
@@ -23,7 +20,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DefaultDocumentProcessingService implements DocumentProcessingService {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultDocumentProcessingService.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(DefaultDocumentProcessingService.class);
 
     private final DocumentStorageService storageService;
     private final ChunkRepository chunkRepository;
@@ -53,21 +51,23 @@ public class DefaultDocumentProcessingService implements DocumentProcessingServi
     @Override
     public PagedResponse<ChunkResponse> getChunks(UUID documentId, Pageable pageable) {
         storageService.getDocument(documentId);
-        var chunks = chunkRepository.findByDocumentId(documentId, pageable)
-                .map(documentMapper::toChunkResponse);
+        var chunks =
+                chunkRepository
+                        .findByDocumentId(documentId, pageable)
+                        .map(documentMapper::toChunkResponse);
         return PagedResponse.from(chunks);
     }
 
     @Override
     public DocumentResponse reprocess(UUID documentId) {
         var document = storageService.resetForProcessing(documentId);
-        var request = new ProcessDocumentRequest(
-                document.getFileName(),
-                document.getSourceBucket(),
-                document.getSourceKey(),
-                document.getChecksum(),
-                document.getLanguage()
-        );
+        var request =
+                new ProcessDocumentRequest(
+                        document.getFileName(),
+                        document.getSourceBucket(),
+                        document.getSourceKey(),
+                        document.getChecksum(),
+                        document.getLanguage());
         log.info("Document reprocessing accepted documentId={}", document.getId());
         documentProcessingWorker.processAsync(document.getId(), request);
         return documentMapper.toResponse(document);

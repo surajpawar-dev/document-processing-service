@@ -14,11 +14,14 @@ public class S3ClientConfig {
 
     @Bean
     S3Client s3Client(AwsProperties awsProperties) {
-        var builder = S3Client.builder()
-                .region(Region.of(awsProperties.getRegion()))
-                .serviceConfiguration(S3Configuration.builder()
-                        .pathStyleAccessEnabled(awsProperties.getS3().isPathStyleAccessEnabled())
-                        .build());
+        var builder =
+                S3Client.builder()
+                        .region(Region.of(awsProperties.getRegion()))
+                        .serviceConfiguration(
+                                S3Configuration.builder()
+                                        .pathStyleAccessEnabled(
+                                                awsProperties.getS3().isPathStyleAccessEnabled())
+                                        .build());
 
         if (StringUtils.isNotBlank(awsProperties.getS3().getEndpoint())) {
             builder.endpointOverride(URI.create(awsProperties.getS3().getEndpoint()));

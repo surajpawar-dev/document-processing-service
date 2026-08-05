@@ -17,8 +17,11 @@ class ChunkingPropertiesTest {
             var violations = validatorFactory.getValidator().validate(properties);
 
             assertThat(violations)
-                    .anySatisfy(violation -> assertThat(violation.getMessage())
-                            .isEqualTo("overlapSize must be smaller than maxChunkSize"));
+                    .anySatisfy(
+                            violation ->
+                                    assertThat(violation.getMessage())
+                                            .isEqualTo(
+                                                    "overlapSize must be smaller than maxChunkSize"));
         }
     }
 
@@ -32,8 +35,11 @@ class ChunkingPropertiesTest {
             var violations = validatorFactory.getValidator().validate(properties);
 
             assertThat(violations)
-                    .anySatisfy(violation -> assertThat(violation.getMessage())
-                            .isEqualTo("minChunkSize must be less than or equal to maxChunkSize"));
+                    .anySatisfy(
+                            violation ->
+                                    assertThat(violation.getMessage())
+                                            .isEqualTo(
+                                                    "minChunkSize must be less than or equal to maxChunkSize"));
         }
     }
 }

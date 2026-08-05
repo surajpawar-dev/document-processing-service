@@ -1,14 +1,13 @@
 package com.suraj.rag.documentprocessing.client.s3;
 
 import com.suraj.rag.documentprocessing.exception.DocumentReadException;
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-
-import java.io.InputStream;
 
 @Component
 @RequiredArgsConstructor

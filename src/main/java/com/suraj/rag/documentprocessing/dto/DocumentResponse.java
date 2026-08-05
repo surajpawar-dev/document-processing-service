@@ -22,6 +22,4 @@ public record DocumentResponse(
         Map<String, Object> metadata,
         Instant createdAt,
         Instant updatedAt,
-        Long version
-) {
-}
+        Long version) {}

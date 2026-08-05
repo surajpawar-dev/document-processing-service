@@ -12,6 +12,4 @@ public record TextChunk(
         String language,
         String source,
         UUID parentChunkId,
-        Map<String, Object> metadata
-) {
-}
+        Map<String, Object> metadata) {}

@@ -2,16 +2,16 @@ package com.suraj.rag.documentprocessing.validation;
 
 import com.suraj.rag.documentprocessing.dto.ProcessDocumentRequest;
 import com.suraj.rag.documentprocessing.exception.ValidationException;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.regex.Pattern;
 
 @Component
 public class PdfDocumentRequestValidator {
 
     private static final Pattern SHA_256_PATTERN = Pattern.compile("^[a-fA-F0-9]{64}$");
-    private static final Pattern S3_BUCKET_PATTERN = Pattern.compile("^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$");
+    private static final Pattern S3_BUCKET_PATTERN =
+            Pattern.compile("^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$");
     private static final String PDF_EXTENSION = ".pdf";
 
     public void validate(ProcessDocumentRequest request) {

@@ -27,7 +27,8 @@ public class RecursiveChunkingStrategy implements ChunkingStrategy {
         try {
             var text = ChunkingSupport.normalizeText(document.text());
 
-            // Prefer semantic boundaries first, then fall back to words and fixed windows for long runs.
+            // Prefer semantic boundaries first, then fall back to words and fixed windows for long
+            // runs.
             var units = splitRecursively(text, 0);
             var chunks = ChunkingSupport.mergeWithOverlap(units, properties);
             return ChunkingSupport.toChunks(chunks, text, type());

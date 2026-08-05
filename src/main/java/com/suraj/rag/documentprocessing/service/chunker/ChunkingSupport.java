@@ -9,10 +9,10 @@ import java.util.Map;
 
 final class ChunkingSupport {
 
-    private ChunkingSupport() {
-    }
+    private ChunkingSupport() {}
 
-    static List<TextChunk> toChunks(List<String> parts, String fullText, ChunkingStrategyType strategy) {
+    static List<TextChunk> toChunks(
+            List<String> parts, String fullText, ChunkingStrategyType strategy) {
         var chunks = new ArrayList<TextChunk>();
         var searchFrom = 0;
 
@@ -34,17 +34,17 @@ final class ChunkingSupport {
             metadata.put("charEnd", end);
             metadata.put("length", content.length());
 
-            chunks.add(new TextChunk(
-                    chunks.size(),
-                    content,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    Map.copyOf(metadata)
-            ));
+            chunks.add(
+                    new TextChunk(
+                            chunks.size(),
+                            content,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            Map.copyOf(metadata)));
             searchFrom = Math.max(start + 1, end - 1);
         }
 
@@ -96,9 +96,14 @@ final class ChunkingSupport {
             }
 
             var separatorLength = current.isEmpty() ? 0 : 1;
-            if (!current.isEmpty() && current.length() + separatorLength + normalized.length() > maxChunkSize) {
+            if (!current.isEmpty()
+                    && current.length() + separatorLength + normalized.length() > maxChunkSize) {
                 flush(current, chunks);
-                appendOverlap(current, chunks.getLast(), Math.max(0, maxChunkSize - normalized.length() - 1), overlapSize);
+                appendOverlap(
+                        current,
+                        chunks.getLast(),
+                        Math.max(0, maxChunkSize - normalized.length() - 1),
+                        overlapSize);
             }
 
             if (!current.isEmpty()) {
@@ -134,7 +139,8 @@ final class ChunkingSupport {
         return Math.min(Math.max(0, properties.getOverlapSize()), Math.max(0, maxChunkSize - 1));
     }
 
-    private static int nearestWordBoundary(String text, int start, int requestedEnd, int minChunkSize) {
+    private static int nearestWordBoundary(
+            String text, int start, int requestedEnd, int minChunkSize) {
         var lowerBound = Math.min(requestedEnd, start + Math.max(1, minChunkSize));
         for (var index = requestedEnd; index > lowerBound; index--) {
             if (Character.isWhitespace(text.charAt(index - 1))) {
@@ -144,7 +150,8 @@ final class ChunkingSupport {
         return requestedEnd;
     }
 
-    private static void appendOverlap(StringBuilder current, String previousChunk, int availableSize, int overlapSize) {
+    private static void appendOverlap(
+            StringBuilder current, String previousChunk, int availableSize, int overlapSize) {
         if (overlapSize == 0 || availableSize == 0 || previousChunk.isBlank()) {
             return;
         }

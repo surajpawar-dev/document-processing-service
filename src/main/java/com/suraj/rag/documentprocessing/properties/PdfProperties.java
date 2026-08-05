@@ -14,11 +14,9 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.pdf")
 public class PdfProperties {
 
-    @Positive
-    private long maxFileSizeBytes = 52_428_800;
+    @Positive private long maxFileSizeBytes = 52_428_800;
 
     private boolean passwordProtectedSupported;
 
-    @NotNull
-    private Duration extractionTimeout = Duration.ofMinutes(2);
+    @NotNull private Duration extractionTimeout = Duration.ofMinutes(2);
 }

@@ -24,7 +24,6 @@ public class DefaultMetadataGenerator implements MetadataGenerator {
                 chunk.source() != null ? chunk.source() : document.getSourceKey(),
                 checksumCalculator.sha256(chunk.content()),
                 chunk.parentChunkId(),
-                chunk.metadata()
-        );
+                chunk.metadata());
     }
 }

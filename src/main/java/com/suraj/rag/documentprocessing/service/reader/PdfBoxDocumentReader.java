@@ -20,14 +20,14 @@ public class PdfBoxDocumentReader implements DocumentReader {
     @Override
     public ReadDocument read(InputStream inputStream, DocumentReadContext context) {
         try (var document = Loader.loadPDF(inputStream.readAllBytes())) {
-            log.info("Extracting PDF text sourceBucket={} sourceKey={}", context.sourceBucket(), context.sourceKey());
+            log.info(
+                    "Extracting PDF text sourceBucket={} sourceKey={}",
+                    context.sourceBucket(),
+                    context.sourceKey());
             var stripper = new PDFTextStripper();
             var text = stripper.getText(document);
             return new ReadDocument(
-                    text,
-                    List.of(),
-                    Map.of("pageCount", document.getNumberOfPages())
-            );
+                    text, List.of(), Map.of("pageCount", document.getNumberOfPages()));
         } catch (Exception ex) {
             throw new DocumentReadException("Unable to extract text from PDF", ex);
         }

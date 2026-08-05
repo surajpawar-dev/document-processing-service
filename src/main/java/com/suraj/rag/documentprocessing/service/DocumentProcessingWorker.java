@@ -44,50 +44,68 @@ public class DocumentProcessingWorker {
             process(documentId, request);
         } catch (RuntimeException ex) {
             log.error("Document processing failed documentId={}", documentId, ex);
-            storageService.updateStatus(documentId, DocumentProcessingStatus.FAILED, failureMessage(ex));
+            storageService.updateStatus(
+                    documentId, DocumentProcessingStatus.FAILED, failureMessage(ex));
         }
     }
 
     void process(UUID documentId, ProcessDocumentRequest request) {
-        log.info("Document processing started documentId={} sourceBucket={} sourceKey={}",
-                documentId, request.s3Bucket(), request.s3Key());
-
-        storageService.updateStatus(documentId, DocumentProcessingStatus.READING, ApplicationConstants.STATUS_READING);
-        var readContext = new DocumentReadContext(
-                request.fileName(),
-                ApplicationConstants.PDF_CONTENT_TYPE,
+        log.info(
+                "Document processing started documentId={} sourceBucket={} sourceKey={}",
+                documentId,
                 request.s3Bucket(),
-                request.s3Key(),
-                request.checksum(),
-                request.language()
-        );
-        var readDocument = readDocument(request, readContext);
-        storageService.updateReadMetadata(documentId, pageCount(readDocument.metadata()), readDocument.metadata());
+                request.s3Key());
 
-        storageService.updateStatus(documentId, DocumentProcessingStatus.CLEANING, ApplicationConstants.STATUS_CLEANING);
+        storageService.updateStatus(
+                documentId, DocumentProcessingStatus.READING, ApplicationConstants.STATUS_READING);
+        var readContext =
+                new DocumentReadContext(
+                        request.fileName(),
+                        ApplicationConstants.PDF_CONTENT_TYPE,
+                        request.s3Bucket(),
+                        request.s3Key(),
+                        request.checksum(),
+                        request.language());
+        var readDocument = readDocument(request, readContext);
+        storageService.updateReadMetadata(
+                documentId, pageCount(readDocument.metadata()), readDocument.metadata());
+
+        storageService.updateStatus(
+                documentId,
+                DocumentProcessingStatus.CLEANING,
+                ApplicationConstants.STATUS_CLEANING);
         var cleanedDocument = textCleaner.clean(readDocument);
 
-        storageService.updateStatus(documentId, DocumentProcessingStatus.CHUNKING, ApplicationConstants.STATUS_CHUNKING);
-        var chunks = chunkingStrategyResolver.resolve(chunkingProperties.getStrategy()).chunk(cleanedDocument);
+        storageService.updateStatus(
+                documentId,
+                DocumentProcessingStatus.CHUNKING,
+                ApplicationConstants.STATUS_CHUNKING);
+        var chunks =
+                chunkingStrategyResolver
+                        .resolve(chunkingProperties.getStrategy())
+                        .chunk(cleanedDocument);
 
-        storageService.updateStatus(documentId, DocumentProcessingStatus.STORING, ApplicationConstants.STATUS_STORING);
+        storageService.updateStatus(
+                documentId, DocumentProcessingStatus.STORING, ApplicationConstants.STATUS_STORING);
         var document = storageService.getDocument(documentId);
         storageService.replaceChunks(document, chunks);
 
-        var ready = storageService.updateStatus(documentId, DocumentProcessingStatus.READY, ApplicationConstants.STATUS_READY);
-        eventPublisher.publishDocumentReady(new DocumentReadyEvent(
+        var ready =
+                storageService.updateStatus(
+                        documentId,
+                        DocumentProcessingStatus.READY,
+                        ApplicationConstants.STATUS_READY);
+        eventPublisher.publishDocumentReady(
+                new DocumentReadyEvent(
+                        ready.getId(), ready.getChecksum(), ready.getChunkCount(), Instant.now()));
+        log.info(
+                "Document processing completed documentId={} chunkCount={}",
                 ready.getId(),
-                ready.getChecksum(),
-                ready.getChunkCount(),
-                Instant.now()
-        ));
-        log.info("Document processing completed documentId={} chunkCount={}", ready.getId(), ready.getChunkCount());
+                ready.getChunkCount());
     }
 
     private com.suraj.rag.documentprocessing.service.reader.ReadDocument readDocument(
-            ProcessDocumentRequest request,
-            DocumentReadContext readContext
-    ) {
+            ProcessDocumentRequest request, DocumentReadContext readContext) {
         try (var inputStream = s3DocumentClient.readObject(request.s3Bucket(), request.s3Key())) {
             return documentReader.read(inputStream, readContext);
         } catch (IOException ex) {

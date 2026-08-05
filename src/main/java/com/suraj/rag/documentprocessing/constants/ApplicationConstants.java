@@ -23,6 +23,5 @@ public final class ApplicationConstants {
     public static final int MAX_CHUNK_PAGE_SIZE = 200;
     public static final String CHUNK_ORDER_FIELD = "chunkOrder";
 
-    private ApplicationConstants() {
-    }
+    private ApplicationConstants() {}
 }

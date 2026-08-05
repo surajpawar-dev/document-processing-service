@@ -11,7 +11,9 @@ public class ChecksumCalculator {
 
     public String sha256(String value) {
         try {
-            var digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            var digest =
+                    MessageDigest.getInstance("SHA-256")
+                            .digest(value.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(digest);
         } catch (NoSuchAlgorithmException ex) {
             throw new IllegalStateException("SHA-256 digest is unavailable", ex);
