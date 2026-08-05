@@ -205,6 +205,126 @@ AWS_REGION
 AWS_S3_BUCKET
 ```
 
+## Higher Environment Infrastructure
+
+For local platform runs, the parent `document-rag-platform/docker-compose.yml` provides PostgreSQL and LocalStack. The service runs with:
+
+```text
+SPRING_PROFILES_ACTIVE=local
+```
+
+For dev, staging, or production, run with:
+
+```text
+SPRING_PROFILES_ACTIVE=prod
+```
+
+Do not use LocalStack endpoint values in higher environments. Leave `AWS_S3_ENDPOINT` and `AWS_SQS_ENDPOINT` empty or unset so the AWS SDK uses real AWS S3 and SQS endpoints for `AWS_REGION`.
+
+### PostgreSQL
+
+Create a dedicated database for document processing state. This service stores documents, chunks, and processing history.
+
+Minimum configuration:
+
+```text
+DATABASE_URL=jdbc:postgresql://document-processing-db.prod.internal:5432/document_processing?options=-c%20TimeZone=UTC
+DATABASE_USERNAME=<from-secret>
+DATABASE_PASSWORD=<from-secret>
+```
+
+Production notes:
+
+- Use a managed PostgreSQL service where possible.
+- Enable backups and point-in-time recovery.
+- Use TLS for database traffic.
+- Keep one database/schema per environment.
+- Add Flyway or Liquibase before high-scale production rollout so schema changes are controlled.
+
+### Amazon S3
+
+The service reads PDFs uploaded by `rag-upload-service`.
+
+Required configuration:
+
+```text
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=documents-prod
+AWS_S3_ENDPOINT=
+AWS_S3_PATH_STYLE_ACCESS_ENABLED=false
+```
+
+Required AWS permissions:
+
+```text
+s3:GetObject
+s3:HeadObject
+```
+
+The bucket must be the same bucket used by `rag-upload-service` for the same environment.
+
+### Amazon SQS
+
+When document-ready events should trigger embedding automatically, use the SQS publisher:
+
+```text
+DOCUMENT_EVENT_PUBLISHER=sqs
+DOCUMENT_READY_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/<account-id>/document-ready-prod
+AWS_SQS_ENDPOINT=
+```
+
+Required AWS permissions:
+
+```text
+sqs:SendMessage
+```
+
+Use a dead-letter queue on the consumer side and keep queue names environment-specific, for example:
+
+```text
+document-ready-dev
+document-ready-staging
+document-ready-prod
+```
+
+### Service-to-Service Contract
+
+The Embedding Service depends on these endpoints:
+
+```text
+GET /documents/{id}
+GET /documents/{id}/chunks?page=0&size=200
+GET /documents/{id}/status
+```
+
+Keep this service reachable from `rag-embedding-service` through an internal service DNS name or internal load balancer.
+
+### Production Example
+
+```text
+SPRING_PROFILES_ACTIVE=prod
+SERVER_PORT=8080
+
+DATABASE_URL=jdbc:postgresql://document-processing-db.prod.internal:5432/document_processing?options=-c%20TimeZone=UTC
+DATABASE_USERNAME=<from-secret>
+DATABASE_PASSWORD=<from-secret>
+
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=documents-prod
+AWS_S3_ENDPOINT=
+AWS_S3_PATH_STYLE_ACCESS_ENABLED=false
+
+DOCUMENT_EVENT_PUBLISHER=sqs
+AWS_SQS_ENDPOINT=
+DOCUMENT_READY_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/<account-id>/document-ready-prod
+
+PROCESSING_CORE_POOL_SIZE=4
+PROCESSING_MAX_POOL_SIZE=8
+PROCESSING_QUEUE_CAPACITY=500
+```
+
+AWS credentials should come from the hosting platform IAM role, not from hardcoded access keys.
+
 ## Chunking Strategies
 
 The service currently supports three deterministic chunking strategies.
